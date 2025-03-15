@@ -1,8 +1,14 @@
 interface GridInterface{
-    rows: number,
-    maximumTextLengthSetSoFar: number
+    rows: number;
+    columns: number;
+    cellStyles: string;
+    cellSize: number;
+    maximumTextLengthSetSoFar: number;
+    resizeCallback: (this: Window, ev: UIEvent) => void;
+    maximumTextLengthElement?: HTMLDivElement;
+    grid: HTMLDivElement;
 }
-class ResponsiveGrid extends HTMLElement { // implements GridInterface
+class ResponsiveGrid extends HTMLElement implements GridInterface{ // 
     //when the element is initialised like this, the rows & columns aren't set in the constructor
     // let grid = document.createElement("responsive-grid");
     // grid.rows = this.numberOfRows;
