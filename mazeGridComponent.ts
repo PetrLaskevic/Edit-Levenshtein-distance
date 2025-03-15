@@ -15,9 +15,9 @@ class ResponsiveGrid extends HTMLElement { // implements GridInterface
     cellStyles!: string;
     cellSize!: number;
     maximumTextLengthSetSoFar: number;
-    resizeCallback: Function;
-    maximumTextLengthElement?: HTMLElement;
-    grid: HTMLElement;
+    resizeCallback: (this: Window, ev: UIEvent) => void;
+    maximumTextLengthElement?: HTMLDivElement;
+    grid: HTMLDivElement;
 
     constructor() {
         super();
@@ -85,6 +85,7 @@ class ResponsiveGrid extends HTMLElement { // implements GridInterface
             <div id="grid"></div>
         `;
         this.grid = (this.shadowRoot.getElementById('grid') as HTMLDivElement);
+        this.resizeCallback = this.handleResize.bind(this);
     }
 
     connectedCallback() {
@@ -102,7 +103,7 @@ class ResponsiveGrid extends HTMLElement { // implements GridInterface
         // Binding the function or using an anonymous function can create a new reference, causing removeEventListener to fail.
         //src: https://medium.com/@aleksej.gudkov/lwc-removeeventlistener-not-working-1f8dcb417e30
         //=> Storing the function reference with this.resizeCallback fixes the issue
-        this.resizeCallback = this.handleResize.bind(this);
+        
         window.addEventListener('resize', this.resizeCallback);
     }
 
@@ -112,7 +113,7 @@ class ResponsiveGrid extends HTMLElement { // implements GridInterface
     }
 
     //public function, returns the cell at the specified index
-    at(row: number, column: number){
+    at(row: number, column: number): HTMLDivElement {
         if(!Number.isInteger(row) || !Number.isInteger(column)){
             throw Error("Arguments must be numbers");
         }
@@ -124,7 +125,7 @@ class ResponsiveGrid extends HTMLElement { // implements GridInterface
             throw Error("Grid has not been initialised properly, there are no cells! Make sure you connected the Grid to DOM (.appendChild or similar)")
         }
         //row coordinate * length of row 
-        return this.grid.children[row * this.columns + column];
+        return (this.grid.children[row * this.columns + column] as HTMLDivElement);
     }
 
     addClassToCell(coordinates: [number, number], className: string){
@@ -152,7 +153,9 @@ class ResponsiveGrid extends HTMLElement { // implements GridInterface
             this.maximumTextLengthSetSoFar = text.length;
             console.log("hleda se nova velikost", text.length, text);
             this.maximumTextLengthElement  =  this.at(row, column);
-
+            if(!(this.shadowRoot && this.shadowRoot.host.parentElement)){
+                throw Error("Grid not attached to DOM (=is detached = not visible)! Why is setTextToCell called then?");
+            }
             const { clientWidth, clientHeight } = this.shadowRoot!.host.parentElement;
             this.cellSize = Math.min(clientWidth / this.columns, clientHeight / this.rows);
 
@@ -160,46 +163,12 @@ class ResponsiveGrid extends HTMLElement { // implements GridInterface
         }
         
     }
-
-    //public function
-    //renders a maze from a 2D array of characters
-    renderMaze(mazeArray: Array<string>){
-        //(2D Array of characters, abych nemusel tady po 3. rozhodovat whichLineEnding)
-        
-        //odebrani prazdneho radku na konci
-	    if(mazeArray[mazeArray.length - 1].trim() == ""){
-	    	mazeArray.pop();
-	    }
-
-		this.dbgMazeText = mazeArray.slice(1).map(row => row.split('')); //for debugging dbgMazeText console.table(this.dbgMazeText)
-		// console.log(mazeArray);
-
-        //empty grid was created from the constructor, 
-        //so now assign proper classes to the existing cells
-
-        //First row is maze size info (this.pocetRows,this.pocetColumns), so skipping it
-        //actual maze starts on second row
-        for(let x = 1; x < mazeArray.length; x++){ //mazeArray.length == this.rows
-            let row = mazeArray[x].split("");
-
-            for(let y = 0; y < mazeArray[1].length; y++){
-                let character = row[y];
-                if(character == "#"){
-                    //first row are maze dimensions, so x - 1 to get correct index
-                    this.at(x - 1 ,y).classList.add("green");
-                    // console.log("ww")
-                }else if(character == "S"){
-
-                }else if(character == "E"){
-
-                }
-            }
-        }
-
-    }
-
+    
     handleResize() {
-        //Calculates widths of cells 
+        //Calculates widths of cells
+        if(!(this.shadowRoot && this.shadowRoot.host.parentElement)){
+            throw Error("Grid not attached to DOM (=is detached = not visible)! Why is handleResize called then?");
+        } 
         const { clientWidth, clientHeight } = this.shadowRoot.host.parentElement;
 
         // Determine the smallest dimension to ensure square cells
@@ -235,10 +204,10 @@ class ResponsiveGrid extends HTMLElement { // implements GridInterface
 
     //finds optimal font size for the longest text cell
     //which will be the font size for all other cells
-    findFontSizeForCell(cell, cellSize){
+    findFontSizeForCell(cell: HTMLDivElement, cellSize: number){
         let fontSize = cellSize / 2; // Initial font size guess
         cell.style.fontSize = fontSize + 'px';
-        cell.style.lineHeight = 1; //in the base style, optional here
+        cell.style.lineHeight = "1"; //in the base style, optional here
 
         // Decrease font size until it fits within the cell's dimensions
         while (fontSize > 0 && (cell.scrollWidth > cell.clientWidth || cell.scrollHeight > cell.clientHeight)) {
@@ -250,7 +219,7 @@ class ResponsiveGrid extends HTMLElement { // implements GridInterface
         console.log("new font size", fontSize);
     }
 
-    adjustFontSize(grid, cellSize) {
+    adjustFontSize(grid: HTMLDivElement, cellSize: number) {
         // Sets the maximum possible font size to cells, 
         // so that the text of maximum length in "this.maximumTextLengthElement" of length "this.maximumTextLengthSetSoFar" fits without overflow
         if(this.maximumTextLengthElement == undefined){
