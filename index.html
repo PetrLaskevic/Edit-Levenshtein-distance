@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit (Levenshtein) distance Visualisation</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        header {
+            padding: 10px;
+            text-align: center;
+            /* background-color: #f6a9702b; #ddd; */
+            flex: 0 0 auto; /* Ensure the header doesn't shrink or grow */
+        }
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding-left: 5px;
+            box-sizing: border-box;
+        }
+        responsive-grid {
+            width: 100%;
+
+            /*
+            visually creates padding around the grid
+            (other ways like setting padding or margin as CSS properties caused overflow)
+            (as the widget is designed to scale as much as it can => 
+            the alternative would be introducing the same multiplying coefficent in the calculation algorithm)
+            */
+            /* transform: scale(0.955); */
+        }
+        .extra-content {
+            padding: 20px;
+            background-color: #f8f8f8;
+            width: 100%;
+            text-align: center;
+        }
+
+        .selectedLetter{
+            color: #e4904d; 
+        }
+
+        /*header styles*/
+        .ctverecek{
+            height: 1.25rem;
+            aspect-ratio: 1/1;
+        }
+        .visited{
+            background: #c77e1f;
+        }
+        .visitedText{
+            color: #c77e1fbf;
+        }
+        .explored{
+            background: #6acd67;
+        }
+        .exploredText{
+            color: #4eb54b;
+        }
+        .end{
+            background: #0022a5 !important;  /* maybe #00a56f;*/
+        }
+        .start{
+            background: #f85701 !important;
+        }
+        .endText{
+            color: #0022a5;
+        }
+        .endCtverecek{
+            background: #0022a5;
+        }
+        .startText{
+            color: #f85701;
+        }
+        .green{
+            background: green;
+        }
+        .greenText{
+            color: green;
+        }
+        .textHolder{
+            display: flex;
+            gap: 5px;
+            font-size: 1.5rem !important;
+            align-items: baseline;
+        }
+        .textHolder * {
+            font-size: 1.5rem !important;
+        }
+        .inlineTextHolder{
+            display: inline-flex;
+            gap: 5px;
+            align-items: baseline;
+            width: fit-content;
+        }
+        .inlineTextHolder > .ctverecek{
+            height: 1.6ex;
+        }
+        /*popup*/
+        .popup{
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            translate: -50% -50%;
+            background: white;
+            padding: 10px;
+            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; /*https://getcssscan.com/css-box-shadow-examples*/
+            border-radius: 3px;
+            overflow: auto;
+            max-height: 95%;
+            transition: ease opacity 0.5s;
+            visibility: visible
+        }
+        .popup > .heading{
+            margin-top: 0px;
+            font-size: 1.2rem;
+        }
+         .hidden{
+           visibility: hidden;
+            opacity: 0;
+        }
+        .ok{
+            width: 4.5em;
+            border: none;
+            padding: 7px;
+            border-radius: 3px
+        }
+
+        body > :not(main responsive-grid, main) {
+           padding: 5px
+        }
+
+        p {
+            /* to make the space between pathText and explanation paragraph more compact */
+            margin: 10px;
+        }
+
+        /*dark theme*/
+        @media (prefers-color-scheme: dark) {
+            h1{
+                color: green;
+            }
+            td{
+                background: #0a0a0d;
+            }
+            table{
+                background: #f5deb324;
+            }
+            :root{
+                color-scheme: dark;
+            }
+            .considered{
+                background: red !important;
+            }
+            .green{
+                background: #206e2f8c;
+            }
+            .end{
+            background: #00d38e !important;  /* #0022a5; for light theme = nicely legible in light theme, not so in dark theme, similarly to the green color in light theme,   or maybe #00a56f;*/
+            }
+            .endText{
+                color: #00d38e;
+            }
+            .endCtverecek{
+                background: #00d38e;
+            }
+            .visited:not(.green, .start){
+                background: #c77e1fbf;
+            }
+            .skipped:not(.green, .start){
+                background: #4eb54bc2; 
+            }
+            /*nutne pridat :not(.green, .start), aby to mathchlo specificitu (a prebilo, protoze je pod tim) .visited:not(.green, .start)*/
+            .explored:not(.green, .start){
+                background: #4eb54bc2; /*#4eb54b*/
+            }
+            .from{
+                outline: 2px solid white;
+            }
+            .exploredText{
+                color: #4eb54bc2;
+            }
+            .inlineCode{
+                background: #33383ac7;
+            }
+            .blockCode{
+                background: #33383ac7;
+            }
+            .popup{
+                background: rgba(10, 11, 11, 0.65);
+                backdrop-filter: blur(5px);
+            }
+            .pathText{
+                color: #008eff; /*#1b90ed*/
+            }
+        }
+    </style>
+</head>
+<body>
+    <header id="controls" style="display: flex;flex-wrap: wrap;gap: 28px;"> 
+        <div>
+          <h1 style="margin: 0 auto;width: fit-content;">Levenshteinova vzdálenost</h1>
+          <div id="left" style="display: inline-flex;align-items: baseline;flex-wrap: wrap;column-gap: 10px;justify-content: center;">
+                <p id="visualisationDelayControls">Delay in ms:
+                  <input type="number" min="0" style="width: 5rem" value="1000" id="visualisationDelayPicker">
+                </p>
+          </div>
+        </div>
+          <div id="right" style="flex-grow: 1;flex-basis: 431px;min-width: min-content;"> <!-- originally there was flex-basis: min-content; it worked pretty well, I just wanted to move the breakpoint of how it wraps to a bit wider, I wanted to put flex-basis: calc(min-content + 50px), but it doesn't work, so I tried padding-left: 50px, which worked, but it looked weird again on my phone (I didn't want to add more media query, so I added flex-basis: 431px (value found experimentally)) -->
+            <div id="legenda" style="display: flex;gap:20px;flex-wrap: wrap">
+              <div class="textHolder">
+                  <label>První slovo: <input type="text"></label>
+              </div>
+              <div class="textHolder">
+                <label>Druhé slovo: <input type="text"></label>
+              </div> 
+              <div class="textHolder">
+                 <button id="launch">Spustit</button>
+              </div>
+            </div>
+          </div>
+    </header>
+    <main>
+        <!-- <responsive-grid rows="15" columns="50" max-length="3" cellStyles="visualisation.css"></responsive-grid> -->
+    </main>
+    <p class="presentResult"><br></p>
+    
+    <script src="mazeGridComponent.js"></script>  <!--  component7.js"-->
+    <script type="module" src="main.js"></script>
+</body>
+</html>

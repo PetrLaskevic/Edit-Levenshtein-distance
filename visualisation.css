@@ -1,0 +1,132 @@
+/*Styles for the grid to use for cells*/
+.visited{
+    background: #c77e1f;
+}
+.green {
+    background: green;
+}
+/*add .skipped class?*/
+
+.selectedOnWalkThrough{
+    filter: invert(1) contrast(0.8);
+}
+
+.prev{
+    background: cornflowerblue;
+}
+
+.from{
+    outline: 2px solid brown;
+}
+
+.explored{
+    background: #6acd67;
+}
+
+.cell{
+    color: var(--distancesColor);
+}
+.cesta{
+    background-image: url('mazeTileBackgrounds/rightArrow.png') !important;
+    background-size: cover !important;
+  /* these two work too */
+  /* background-size: 100% 100% !important; */
+  /* background-size: contain !important; */
+}
+
+.L{
+    transform: rotate(180deg);
+}
+.P{
+    transform:  rotate(0deg);
+}
+.N{
+    transform: rotate(-90deg);
+}
+.D{
+    transform: rotate(90deg);
+}
+.N.D{
+    background-image: url('mazeTileBackgrounds/arrowTwoDirections.png') !important;
+}
+.N.D.P{
+    background-image: url('mazeTileBackgrounds/ndp.png') !important;
+    transform: rotate(0deg);
+}
+.N.D.L{
+    background-image: url('mazeTileBackgrounds/ndp.png') !important;
+    transform: rotate(180deg);
+}
+.P.L.D{
+    background-image: url('mazeTileBackgrounds/ndp.png') !important;
+    transform: rotate(90deg);
+}
+.P.L.N{
+    background-image: url("mazeTileBackgrounds/ndp.png") !important;
+    transform: rotate(-90deg);
+}
+.L.P{
+    background-image: url('mazeTileBackgrounds/arrowTwoDirections.png') !important;
+    /* transform: rotate(90deg); */
+}
+.P.N{
+    background-image: url('mazeTileBackgrounds/arrowPerpendSameDir.png') !important;
+    transform: rotate(-90deg);
+}
+.D.P{
+    background-image: url('mazeTileBackgrounds/arrowPerpendSameDirPreklop.png') !important;
+    transform: rotate(-90deg);
+}
+.L.N{
+    background-image: url('mazeTileBackgrounds/arrowPerpendSameDirPreklop.png') !important;
+    transform: rotate(90deg);
+}
+.L.D{
+    background-image: url('mazeTileBackgrounds/arrowPerpendSameDirPreklop.png') !important;
+    transform: rotate(0deg);
+}
+
+.start{
+    background: #f85701 !important;
+}
+.end{
+    background: #0022a5 !important;  /* maybe #00a56f;*/
+}
+
+/*dark theme*/
+@media (prefers-color-scheme: dark) {
+    .considered{
+        background: red !important;
+    }
+    .green{
+        background: #206e2f8c;
+    }
+    .end{
+        background: #00d38e !important;  /* #0022a5; for light theme = nicely legible in light theme, not so in dark theme, similarly to the green color in light theme,   or maybe #00a56f;*/
+    }
+    .endText{
+        color: #00d38e;
+    }
+    .endCtverecek{
+        background: #00d38e;
+    }
+    .visited:not(.green, .start){
+        background: #c77e1fbf;
+    }
+    .skipped:not(.green, .start){
+        background: #4eb54bc2; 
+    }
+    /*nutne pridat :not(.green, .start), aby to mathchlo specificitu (a prebilo, protoze je pod tim) .visited:not(.green, .start)*/
+    .explored:not(.green, .start){
+        background: #4eb54bc2; /*#4eb54b*/
+    }
+    .from{
+        outline: 2px solid white;
+    }
+    .exploredText{
+        color: #4eb54bc2;
+    }
+    .pathText{
+        color: #008eff; /*#1b90ed*/
+    }
+}
