@@ -53,6 +53,7 @@ class WagnerFischer{
 		grid.rows = this.numberOfRows;
 		grid.columns = this.numberOfColumns;
 		grid.cellStyles = "./visualisation.css";
+		document.querySelector("main").appendChild(grid);
 		this.grid = grid;
 		this.resultParagraph = document.querySelector(".presentResult");
 		this.resultParagraph.innerHTML = "<br>";
