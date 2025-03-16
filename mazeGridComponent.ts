@@ -144,7 +144,10 @@ class ResponsiveGrid extends HTMLElement implements GridInterface{
         this.at(row, column).classList.remove(className);
     }
 
-    setTextToCell(coordinates: [number, number], text: string){
+    setTextToCell(coordinates: [row: number, column: number], text: string){
+        if(text == null){
+            throw Error(`Attempted to write null at ${coordinates}`);
+        }
         text = String(text);
         let row, column;
         [row, column] = coordinates;
