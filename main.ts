@@ -1,6 +1,8 @@
 import {WagnerFischer, globalCancelToken} from "./render.js";
 
 let mazeAppClassHolderVariable!: WagnerFischer; //the instance of the maze app
+let wordFrom = document.getElementById("firstWord") as HTMLInputElement;
+let wordTo = document.getElementById("secondWord") as HTMLInputElement;
 
 function makePopup(heading: string, text: string, id: string){
 	//For trusted input only (no input sanitisation here)
@@ -21,10 +23,7 @@ function makePopup(heading: string, text: string, id: string){
 function start(){
 	globalCancelToken.reset();
 	try{
-		if(mazeAppClassHolderVariable != undefined){
-			mazeAppClassHolderVariable.zcelaHotovo = true;
-		}
-		mazeAppClassHolderVariable = new WagnerFischer("boats", "floats");
+		mazeAppClassHolderVariable = new WagnerFischer(wordFrom.value, wordTo.value);
 	}catch(error){
 		console.error(error);
 		//Show the user errors thrown by mazeTextToGraph for example

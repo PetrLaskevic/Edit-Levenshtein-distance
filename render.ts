@@ -101,6 +101,7 @@ class WagnerFischer{
 				this.grid.addClassToCell([0,column], "selectedHorizontal");
 				
 				this.grid.addClassToCell([row, column], "from");
+				//Vulnerable to ""<img src='x' onerror='alert(1);console.log("t")'> => alert will be drawn 
 				statusParagraph.innerHTML = `Comparing <span class="selectedVertical">${this.wordFrom.slice(1,row+1)}</span> and <span class="selectedHorizontal">${this.wordTo.slice(1, column+1)}</span>`
 
 				let deleteOption = this.grid.at(row, column - 1);

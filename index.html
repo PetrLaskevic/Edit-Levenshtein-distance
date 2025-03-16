@@ -19,10 +19,10 @@
           <div id="right" style="flex-grow: 1;flex-basis: 431px;min-width: min-content;"> <!-- originally there was flex-basis: min-content; it worked pretty well, I just wanted to move the breakpoint of how it wraps to a bit wider, I wanted to put flex-basis: calc(min-content + 50px), but it doesn't work, so I tried padding-left: 50px, which worked, but it looked weird again on my phone (I didn't want to add more media query, so I added flex-basis: 431px (value found experimentally)) -->
             <div id="legenda" style="display: flex;gap:20px;flex-wrap: wrap">
               <div class="textHolder">
-                  <label>První slovo: <input type="text"></label>
+                  <label>První slovo: <input id="firstWord" type="text" value="boats"></label>
               </div>
               <div class="textHolder">
-                <label>Druhé slovo: <input type="text"></label>
+                <label>Druhé slovo: <input id="secondWord" type="text" value="float"></label>
               </div> 
               <div class="textHolder">
                  <button id="launch">Spustit</button>
