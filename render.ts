@@ -76,6 +76,16 @@ class WagnerFischer{
 		for(const [index, char] of Array.from(this.wordTo).entries()){
 			this.grid.setTextToCell([0, index + 1], char);
 		}
+		//initialise the second row, show how many characters need to be inserted to get from "_" to "f", "fl", "flo" etc.
+		// (len of the said subistring => base case for the algorithm)
+		for(let charsToInsertFromEmptyString = 0; charsToInsertFromEmptyString < this.wordTo.length; charsToInsertFromEmptyString++){
+			this.grid.setTextToCell([1, charsToInsertFromEmptyString+1], charsToInsertFromEmptyString.toString());
+		}
+		//initialise the second column, show how many characters need to be removed to get from "b", "bo", "boa", etc. to "_":
+		// (len of the said subistring => base case for the algorithm)
+		for(let charsToDeleteToEmptyString = 0; charsToDeleteToEmptyString < this.wordFrom.length; charsToDeleteToEmptyString++){
+			this.grid.setTextToCell([charsToDeleteToEmptyString+1, 1], charsToDeleteToEmptyString.toString());
+		}
 	}
 }
 
