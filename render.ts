@@ -40,7 +40,8 @@ function stopAllAnimationDelays(){
 	globalCancelToken.cancelAll();
 }
 
-let animationDelay = document.getElementById("visualisationDelayPicker");
+let animationDelay = document.getElementById("visualisationDelayPicker") as HTMLInputElement;
+let statusParagraph = document.querySelector(".presentResult") as HTMLParagraphElement;
 
 class WagnerFischer{
 	wordFrom: string;
@@ -50,10 +51,10 @@ class WagnerFischer{
 	grid: ResponsiveGrid;
 	resultParagraph: HTMLElement;
 	constructor(wordFrom: string, wordTo: string){
-		this.wordFrom = "_" + wordFrom;
-		this.wordTo = "_" + wordTo;
-		this.numberOfRows = this.wordFrom.length + 1;
-		this.numberOfColumns = this.wordTo.length + 1;
+		this.wordFrom = " _" + wordFrom;
+		this.wordTo = " _" + wordTo;
+		this.numberOfRows = this.wordFrom.length;
+		this.numberOfColumns = this.wordTo.length;
 		//remove the old grid from DOM (for the previously selected maze) (until now it was simply hidden)
 		document.querySelector("responsive-grid")?.remove();
 		let grid = document.createElement("responsive-grid");
@@ -67,25 +68,44 @@ class WagnerFischer{
 		this.renderMaze();
 	}
 
-	renderMaze(){
+	async renderMaze(){
 		//set first column as the word from
 		for(const [index, char] of Array.from(this.wordFrom).entries()){
-			this.grid.setTextToCell([index + 1,0], char);
+			this.grid.setTextToCell([index,0], char);
 		}
 		//set first row as the word to
 		for(const [index, char] of Array.from(this.wordTo).entries()){
-			this.grid.setTextToCell([0, index + 1], char);
+			this.grid.setTextToCell([0, index], char);
 		}
 		//initialise the second row, show how many characters need to be inserted to get from "_" to "f", "fl", "flo" etc.
 		// (len of the said subistring => base case for the algorithm)
-		for(let charsToInsertFromEmptyString = 0; charsToInsertFromEmptyString < this.wordTo.length; charsToInsertFromEmptyString++){
-			this.grid.setTextToCell([1, charsToInsertFromEmptyString+1], charsToInsertFromEmptyString.toString());
+		for(let charsToInsertFromEmptyString = 0; charsToInsertFromEmptyString < this.wordTo.length - 1; charsToInsertFromEmptyString++){
+			this.grid.setTextToCell([1, charsToInsertFromEmptyString+1], charsToInsertFromEmptyString);
 		}
 		//initialise the second column, show how many characters need to be removed to get from "b", "bo", "boa", etc. to "_":
 		// (len of the said subistring => base case for the algorithm)
-		for(let charsToDeleteToEmptyString = 0; charsToDeleteToEmptyString < this.wordFrom.length; charsToDeleteToEmptyString++){
-			this.grid.setTextToCell([charsToDeleteToEmptyString+1, 1], charsToDeleteToEmptyString.toString());
+		for(let charsToDeleteToEmptyString = 0; charsToDeleteToEmptyString < this.wordFrom.length - 1; charsToDeleteToEmptyString++){
+			this.grid.setTextToCell([charsToDeleteToEmptyString+1, 1], charsToDeleteToEmptyString);
 		}
+
+		for(let row = 2; row < this.numberOfRows; row++ ){
+			for(let column = 2; column < this.numberOfColumns; column++){
+				this.grid.addClassToCell([row, column], "from");
+				statusParagraph.textContent = `Comparing ${this.wordFrom[row]} and ${this.wordTo[column]}`
+				let deleteOption = this.grid.at(row, column - 1).textContent;
+				let replaceOption = this.grid.at(row - 1, column - 1).textContent;
+				let insertOption = this.grid.at(row - 1, column).textContent;
+				let minStepsOption = Math.min(...[deleteOption, replaceOption, insertOption].map(Number));
+				if(this.wordFrom[row] == this.wordTo[column]){
+					this.grid.setTextToCell([row,column], minStepsOption);
+				}else{
+					this.grid.setTextToCell([row,column], minStepsOption + 1);
+				}
+				await wait(Number(animationDelay.value));
+				this.grid.removeClassFromCell([row, column], "from");
+			}
+		}
+		statusParagraph.textContent = `Edit distance from ${this.wordFrom.slice(2)} to ${this.wordTo.slice(2)} is ${this.grid.at(this.numberOfRows-1,this.numberOfColumns-1).textContent}`
 	}
 }
 
