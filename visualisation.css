@@ -1,6 +1,7 @@
-/*Styles for the grid to use for cells*/
-.visited{
+/* Styles for the grid to use for cells */
+.selectedVertical{
     background: #c77e1f;
+    background: #ee6624;;
 }
 .green {
     background: green;
@@ -19,7 +20,7 @@
     background: brown;
 }
 
-.explored{
+.selectedHorizontal{
     background: #6acd67;
 }
 
@@ -47,6 +48,15 @@
     }
     .endText{
         color: #00d38e;
+    }
+    .selectedHorizontal{
+        background: #41813f;
+    }
+    .selectedVertical{
+        /* background: #0ecea1d4;
+        background: #00d38e;
+        background: #00e1976b; #2876b0 */
+        background: #30a7ffb8;
     }
     .endCtverecek{
         background: #00d38e;

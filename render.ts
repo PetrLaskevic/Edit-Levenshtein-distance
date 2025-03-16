@@ -68,6 +68,12 @@ class WagnerFischer{
 		this.renderMaze();
 	}
 
+	unselectAllLettersHorizontal(){
+		for(let column = 0; column < this.wordTo.length; column++){
+			this.grid.removeClassFromCell([0,column], "selectedHorizontal");
+		}
+	}
+
 	async renderMaze(){
 		//set first column as the word from
 		for(const [index, char] of Array.from(this.wordFrom).entries()){
@@ -89,13 +95,19 @@ class WagnerFischer{
 		}
 
 		for(let row = 2; row < this.numberOfRows; row++ ){
+			this.unselectAllLettersHorizontal();
+			this.grid.addClassToCell([row, 0], "selectedVertical");
 			for(let column = 2; column < this.numberOfColumns; column++){
+				this.grid.addClassToCell([0,column], "selectedHorizontal");
+				
 				this.grid.addClassToCell([row, column], "from");
-				statusParagraph.textContent = `Comparing ${this.wordFrom[row]} and ${this.wordTo[column]}`
-				let deleteOption = this.grid.at(row, column - 1).textContent;
-				let replaceOption = this.grid.at(row - 1, column - 1).textContent;
-				let insertOption = this.grid.at(row - 1, column).textContent;
+				statusParagraph.textContent = `Comparing ${this.wordFrom.slice(1,row+1)} and ${this.wordTo.slice(1, column+1)}`
+
+				let deleteOption = this.grid.at(row, column - 1);
+				let replaceOption = this.grid.at(row - 1, column - 1);
+				let insertOption = this.grid.at(row - 1, column);
 				let minStepsOption = Math.min(...[deleteOption, replaceOption, insertOption].map(Number));
+
 				if(this.wordFrom[row] == this.wordTo[column]){
 					this.grid.setTextToCell([row,column], minStepsOption);
 				}else{
@@ -104,8 +116,9 @@ class WagnerFischer{
 				await wait(Number(animationDelay.value));
 				this.grid.removeClassFromCell([row, column], "from");
 			}
-		}
-		statusParagraph.textContent = `Edit distance from ${this.wordFrom.slice(2)} to ${this.wordTo.slice(2)} is ${this.grid.at(this.numberOfRows-1,this.numberOfColumns-1).textContent}`
+		};
+		this.grid.addClassToCell([this.numberOfRows-1, this.numberOfColumns-1], "from");
+		statusParagraph.textContent = `Edit distance from ${this.wordFrom.slice(2)} to ${this.wordTo.slice(2)} is ${this.grid.at(this.numberOfRows-1,this.numberOfColumns-1)}`
 	}
 }
 
