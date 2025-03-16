@@ -101,12 +101,16 @@ class WagnerFischer{
 				this.grid.addClassToCell([0,column], "selectedHorizontal");
 				
 				this.grid.addClassToCell([row, column], "from");
-				statusParagraph.textContent = `Comparing ${this.wordFrom.slice(1,row+1)} and ${this.wordTo.slice(1, column+1)}`
+				statusParagraph.innerHTML = `Comparing <span class="selectedVertical">${this.wordFrom.slice(1,row+1)}</span> and <span class="selectedHorizontal">${this.wordTo.slice(1, column+1)}</span>`
 
 				let deleteOption = this.grid.at(row, column - 1);
 				let replaceOption = this.grid.at(row - 1, column - 1);
 				let insertOption = this.grid.at(row - 1, column);
 				let minStepsOption = Math.min(...[deleteOption, replaceOption, insertOption].map(Number));
+
+				this.grid.addClassToCell([row, column - 1], "considered");
+				this.grid.addClassToCell([row - 1, column - 1], "considered");
+				this.grid.addClassToCell([row - 1, column], "considered");
 
 				if(this.wordFrom[row] == this.wordTo[column]){
 					this.grid.setTextToCell([row,column], minStepsOption);
@@ -115,10 +119,13 @@ class WagnerFischer{
 				}
 				await wait(Number(animationDelay.value));
 				this.grid.removeClassFromCell([row, column], "from");
+				this.grid.removeClassFromCell([row, column - 1], "considered");
+				this.grid.removeClassFromCell([row - 1, column - 1], "considered");
+				this.grid.removeClassFromCell([row - 1, column], "considered");
 			}
 		};
 		this.grid.addClassToCell([this.numberOfRows-1, this.numberOfColumns-1], "from");
-		statusParagraph.textContent = `Edit distance from ${this.wordFrom.slice(2)} to ${this.wordTo.slice(2)} is ${this.grid.at(this.numberOfRows-1,this.numberOfColumns-1)}`
+		statusParagraph.innerHTML = `Edit distance from <span class="selectedVertical">${this.wordFrom.slice(2)}</span> to <span class="selectedHorizontal">${this.wordTo.slice(2)}</span> is <span>${this.grid.at(this.numberOfRows-1,this.numberOfColumns-1)}</span>`
 	}
 }
 

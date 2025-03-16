@@ -35,10 +35,14 @@
     background: #0022a5 !important;  /* maybe #00a56f;*/
 }
 
+.considered{
+    background: #ffd68a;
+}
+
 /*dark theme*/
 @media (prefers-color-scheme: dark) {
     .considered{
-        background: red !important;
+        background: #888; /* #5f5bcc */
     }
     .green{
         background: #206e2f8c;
