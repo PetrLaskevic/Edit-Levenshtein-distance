@@ -67,7 +67,7 @@ class ResponsiveGrid extends HTMLElement implements GridInterface{
                     overflow: hidden; /* Ensure text does not overflow */
                     font-size: var(--fsize);
                     line-height: 1;
-                    outline: ${this.gapBetweenCells}px solid darkgreen;
+                    outline: ${this.gapBetweenCells}px solid #816d48;
                 }
                 @media (prefers-color-scheme: dark) {
                     :root{
@@ -75,6 +75,7 @@ class ResponsiveGrid extends HTMLElement implements GridInterface{
                     }
                     .cell{
                         background: #0a0a0d;
+                        outline-color: darkgreen;
                     }
                 }
             </style>
