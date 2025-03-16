@@ -132,19 +132,19 @@ class ResponsiveGrid extends HTMLElement implements GridInterface{
         return (this.grid.children[row * this.columns + column] as HTMLDivElement);
     }
 
-    addClassToCell(coordinates: [number, number], className: string){
+    addClassToCell(coordinates: [row: number, column: number], className: string){
         let row, column;
         [row, column] = coordinates;
         this.at(row, column).classList.add(className);
     }
 
-    removeClassFromCell(coordinates: [number, number], className: string){
+    removeClassFromCell(coordinates: [row: number, column: number], className: string){
         let row, column;
         [row, column] = coordinates;
         this.at(row, column).classList.remove(className);
     }
 
-    setTextToCell(coordinates: [row: number, column: number], text: string){
+    setTextToCell(coordinates: [row: number, column: number], text: string | number){
         if(text == null){
             throw Error(`Attempted to write null at ${coordinates}`);
         }
