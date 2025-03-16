@@ -68,8 +68,13 @@ class WagnerFischer{
 	}
 
 	renderMaze(){
-		for(const [index, char] of Array.from(this.wordTo).entries()){
+		//set first column as the word from
+		for(const [index, char] of Array.from(this.wordFrom).entries()){
 			this.grid.setTextToCell([index + 1,0], char);
+		}
+		//set first row as the word to
+		for(const [index, char] of Array.from(this.wordTo).entries()){
+			this.grid.setTextToCell([0, index + 1], char);
 		}
 	}
 }
