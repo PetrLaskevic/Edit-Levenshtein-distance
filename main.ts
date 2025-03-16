@@ -1,16 +1,16 @@
 import {WagnerFischer, globalCancelToken} from "./render.js";
 
 let mazePicker = document.getElementById("mazePicker");
-let mazeAppClassHolderVariable; //the instance of the maze app
+let mazeAppClassHolderVariable!: WagnerFischer; //the instance of the maze app
 
-function whichLineEnding(source) {
+function whichLineEnding(source: string) {
 	var temp = source.indexOf('\n');
 	if (source[temp - 1] === '\r')
 		return 'CRLF' //Windows
 	return 'LF' //Linux
 }
 
-function makePopup(heading, text, id){
+function makePopup(heading: string, text: string, id: string){
 	//For trusted input only (no input sanitisation here)
 	//I use it for exceptions my program generates, and never any user input
 	let div = document.createElement("div");
@@ -38,9 +38,11 @@ function start(){
 	}catch(error){
 		console.error(error);
 		//Show the user errors thrown by mazeTextToGraph for example
-		makePopup(error.message, "", "error");
+		//This is a TS technicality, since you technically can throw anything, not just Error
+		//SMH, I only throw Error and don't have any dependencies which don't
+		makePopup((error as Error).message, "", "error");
 	}
 
 }
-document.getElementById("launch").addEventListener("click", start);
+document.getElementById("launch")!.addEventListener("click", start);
 console.log("yes");

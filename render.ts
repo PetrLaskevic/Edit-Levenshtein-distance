@@ -1,6 +1,7 @@
+import {GridInterface, ResponsiveGrid} from "./mazeGridComponent.js"
 export const globalCancelToken = {
 	cancelled: false,
-	allTimeouts: new Set([]),
+	allTimeouts: new Set<number>(),
 	cancelAll: function () {
 	  this.cancelled = true;
 	  for(let timeoutID of this.allTimeouts){
@@ -19,7 +20,7 @@ export const globalCancelToken = {
 // the 2021 soluton supposedly uses a built in AbortController 
 // (which AFAIK has the advantage that it works on any function built on promises, including built in fetch - so is a way to cancel fetch)
 //But here, I believe this clearInterval / clearTimeout is adequate (btw fun fact, the clearInterval / clearTimeout are interchangeable (src MDN))
-function wait(ms) {
+function wait(ms: number) {
 	if(ms > 0){
 		return new Promise((resolve, reject) => {
 			const timeoutID = setTimeout(() => {
@@ -42,7 +43,13 @@ function stopAllAnimationDelays(){
 let animationDelay = document.getElementById("visualisationDelayPicker");
 
 class WagnerFischer{
-	constructor(wordFrom, wordTo){
+	wordFrom: string;
+	wordTo: string;
+	numberOfRows: number;
+	numberOfColumns: number;
+	grid: ResponsiveGrid;
+	resultParagraph: HTMLElement;
+	constructor(wordFrom: string, wordTo: string){
 		this.wordFrom = "_" + wordFrom;
 		this.wordTo = "_" + wordTo;
 		this.numberOfRows = this.wordFrom.length + 1;
@@ -53,9 +60,9 @@ class WagnerFischer{
 		grid.rows = this.numberOfRows;
 		grid.columns = this.numberOfColumns;
 		grid.cellStyles = "./visualisation.css";
-		document.querySelector("main").appendChild(grid);
+		document.querySelector("main")!.appendChild(grid);
 		this.grid = grid;
-		this.resultParagraph = document.querySelector(".presentResult");
+		this.resultParagraph = (document.querySelector(".presentResult") as HTMLElement);
 		this.resultParagraph.innerHTML = "<br>";
 		this.renderMaze();
 	}
