@@ -1,0 +1,210 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+header {
+    padding: 10px;
+    text-align: center;
+    /* background-color: #f6a9702b; #ddd; */
+    flex: 0 0 auto; /* Ensure the header doesn't shrink or grow */
+}
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding-left: 5px;
+    box-sizing: border-box;
+}
+
+.presentResult{
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.selectedHorizontal{
+    background: #6acd67;
+}
+
+.selectedVertical{
+    background: #ee6624;;
+}
+
+.selectedLetter{
+    color: #e4904d; 
+}
+
+/*header styles*/
+.ctverecek{
+    height: 1.25rem;
+    aspect-ratio: 1/1;
+}
+.visited{
+    background: #c77e1f;
+}
+.visitedText{
+    color: #c77e1fbf;
+}
+.explored{
+    background: #6acd67;
+}
+.exploredText{
+    color: #4eb54b;
+}
+.end{
+    background: #0022a5 !important;  /* maybe #00a56f;*/
+}
+.start{
+    background: #f85701 !important;
+}
+.endText{
+    color: #0022a5;
+}
+.endCtverecek{
+    background: #0022a5;
+}
+.startText{
+    color: #f85701;
+}
+.green{
+    background: green;
+}
+.greenText{
+    color: green;
+}
+.textHolder{
+    display: flex;
+    gap: 5px;
+    font-size: 1.5rem !important;
+    align-items: baseline;
+}
+.textHolder * {
+    font-size: 1.5rem !important;
+}
+.inlineTextHolder{
+    display: inline-flex;
+    gap: 5px;
+    align-items: baseline;
+    width: fit-content;
+}
+.inlineTextHolder > .ctverecek{
+    height: 1.6ex;
+}
+/*popup*/
+.popup{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    background: white;
+    padding: 10px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; /*https://getcssscan.com/css-box-shadow-examples*/
+    border-radius: 3px;
+    overflow: auto;
+    max-height: 95%;
+    transition: ease opacity 0.5s;
+    visibility: visible
+}
+.popup > .heading{
+    margin-top: 0px;
+    font-size: 1.2rem;
+}
+    .hidden{
+    visibility: hidden;
+    opacity: 0;
+}
+.ok{
+    width: 4.5em;
+    border: none;
+    padding: 7px;
+    border-radius: 3px
+}
+
+body > :not(main responsive-grid, main) {
+    padding: 5px
+}
+
+p {
+    /* to make the space between pathText and explanation paragraph more compact */
+    margin: 10px;
+}
+
+@media (prefers-color-scheme: light){
+    body{
+        background: floralwhite;
+    }
+}
+
+/*dark theme*/
+@media (prefers-color-scheme: dark) {
+    h1{
+        color: green;
+    }
+    td{
+        background: #0a0a0d;
+    }
+    table{
+        background: #f5deb324;
+    }
+    :root{
+        color-scheme: dark;
+    }
+    .considered{
+        background: red !important;
+    }
+    .green{
+        background: #206e2f8c;
+    }
+    .end{
+    background: #00d38e !important;  /* #0022a5; for light theme = nicely legible in light theme, not so in dark theme, similarly to the green color in light theme,   or maybe #00a56f;*/
+    }
+    .endText{
+        color: #00d38e;
+    }
+    .endCtverecek{
+        background: #00d38e;
+    }
+    .visited:not(.green, .start){
+        background: #c77e1fbf;
+    }
+    .skipped:not(.green, .start){
+        background: #4eb54bc2; 
+    }
+    /*nutne pridat :not(.green, .start), aby to mathchlo specificitu (a prebilo, protoze je pod tim) .visited:not(.green, .start)*/
+    .explored:not(.green, .start){
+        background: #4eb54bc2; /*#4eb54b*/
+    }
+    .from{
+        outline: 2px solid white;
+    }
+    .exploredText{
+        color: #4eb54bc2;
+    }
+    .inlineCode{
+        background: #33383ac7;
+    }
+    .blockCode{
+        background: #33383ac7;
+    }
+    .popup{
+        background: rgba(10, 11, 11, 0.65);
+        backdrop-filter: blur(5px);
+    }
+    .pathText{
+        color: #008eff; /*#1b90ed*/
+    }
+    .selectedHorizontal{
+        background: #41813f;
+    }
+    .selectedVertical{
+        background: #30a7ffb8;
+    }
+}
