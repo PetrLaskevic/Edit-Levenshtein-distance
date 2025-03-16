@@ -20,6 +20,7 @@ class ResponsiveGrid extends HTMLElement implements GridInterface{
     resizeCallback: (this: Window, ev: UIEvent) => void;
     maximumTextLengthElement?: HTMLDivElement;
     grid: HTMLDivElement;
+    gapBetweenCells = 2; //in px
 
     constructor() {
         super();
@@ -53,6 +54,7 @@ class ResponsiveGrid extends HTMLElement implements GridInterface{
                     height: 100%;
                     /*padding here would create an overflow*/
                     /*padding: 5px;*/
+                    gap: ${this.gapBetweenCells}px;
                 }
                 /*Remove border from cell, because borders are not the same width on the outer cells
                 (becomes apparent when setting border: 5px solid #0a0a0d;)
@@ -67,6 +69,7 @@ class ResponsiveGrid extends HTMLElement implements GridInterface{
                     overflow: hidden; /* Ensure text does not overflow */
                     font-size: var(--fsize);
                     line-height: 1;
+                    outline: ${this.gapBetweenCells}px solid darkgreen;
                 }
                 @media (prefers-color-scheme: dark) {
                     :root{
@@ -174,7 +177,7 @@ class ResponsiveGrid extends HTMLElement implements GridInterface{
         const { clientWidth, clientHeight } = this.shadowRoot.host.parentElement;
 
         // Determine the smallest dimension to ensure square cells
-        this.cellSize = Math.min(clientWidth / this.columns, clientHeight / this.rows);
+        this.cellSize = Math.min((clientWidth - (this.columns-1)*this.gapBetweenCells) / this.columns, (clientHeight - (this.columns-1)*this.gapBetweenCells) / this.rows);
 
         // Set the grid template with fixed cell size
         this.grid.style.gridTemplateColumns = `repeat(${this.columns}, ${this.cellSize}px)`;
