@@ -116,8 +116,17 @@ class ResponsiveGrid extends HTMLElement implements GridInterface{
         window.removeEventListener('resize', this.resizeCallback);
     }
 
-    //public function, returns the cell at the specified index
-    at(row: number, column: number): HTMLDivElement {
+    //returns the text of a cell DOM element at said position
+    //(to avoid spamming this.grid.elementAt(row, column - 1).textContent; everywhere
+    at(row: number, column: number): string{
+        let text = this.elementAt(row, column).textContent;
+        if(text == null){
+            throw Error(`No text at ${row}, ${column}!`);
+        }
+        return text;
+    }
+    //public function, returns the cell DOM element at the specified index
+    elementAt(row: number, column: number): HTMLDivElement {
         if(!Number.isInteger(row) || !Number.isInteger(column)){
             throw Error("Arguments must be numbers");
         }
@@ -135,13 +144,13 @@ class ResponsiveGrid extends HTMLElement implements GridInterface{
     addClassToCell(coordinates: [row: number, column: number], className: string){
         let row, column;
         [row, column] = coordinates;
-        this.at(row, column).classList.add(className);
+        this.elementAt(row, column).classList.add(className);
     }
 
     removeClassFromCell(coordinates: [row: number, column: number], className: string){
         let row, column;
         [row, column] = coordinates;
-        this.at(row, column).classList.remove(className);
+        this.elementAt(row, column).classList.remove(className);
     }
 
     setTextToCell(coordinates: [row: number, column: number], text: string | number){
@@ -154,12 +163,12 @@ class ResponsiveGrid extends HTMLElement implements GridInterface{
         //Right now under the assumption that shorter text than already is there cannot be assigned to a cell
         //(here it is like so, for other algorithms I will need to implement an ordered map, a tree)
         //needed to have a cell with longest text for tracking font size for adjustFontSize
-        this.at(row, column).textContent = text;
+        this.elementAt(row, column).textContent = text;
 
         if(text.length > this.maximumTextLengthSetSoFar){
             this.maximumTextLengthSetSoFar = text.length;
             console.log("hleda se nova velikost", text.length, text);
-            this.maximumTextLengthElement  =  this.at(row, column);
+            this.maximumTextLengthElement  =  this.elementAt(row, column);
             if(!(this.shadowRoot && this.shadowRoot.host.parentElement)){
                 throw Error("Grid not attached to DOM (=is detached = not visible)! Why is setTextToCell called then?");
             }
