@@ -1,14 +1,6 @@
 import {WagnerFischer, globalCancelToken} from "./render.js";
 
-let mazePicker = document.getElementById("mazePicker");
 let mazeAppClassHolderVariable!: WagnerFischer; //the instance of the maze app
-
-function whichLineEnding(source: string) {
-	var temp = source.indexOf('\n');
-	if (source[temp - 1] === '\r')
-		return 'CRLF' //Windows
-	return 'LF' //Linux
-}
 
 function makePopup(heading: string, text: string, id: string){
 	//For trusted input only (no input sanitisation here)
@@ -32,13 +24,11 @@ function start(){
 		if(mazeAppClassHolderVariable != undefined){
 			mazeAppClassHolderVariable.zcelaHotovo = true;
 		}
-		mazeAppClassHolderVariable = new WagnerFischer("boats", "float");
-		// mazeAppClassHolderVariable.renderMaze(text);
-		// mazeAppClassHolderVariable.startDijkstra(); //entry point to our actual program
+		mazeAppClassHolderVariable = new WagnerFischer("boats", "floats");
 	}catch(error){
 		console.error(error);
 		//Show the user errors thrown by mazeTextToGraph for example
-		//This is a TS technicality, since you technically can throw anything, not just Error
+		//This `error as Error` is a TS technicality, since you technically can throw anything, not just Error
 		//SMH, I only throw Error and don't have any dependencies which don't
 		makePopup((error as Error).message, "", "error");
 	}
