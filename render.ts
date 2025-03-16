@@ -82,6 +82,8 @@ class WagnerFischer{
 		const horizontalSpan = document.createElement('span');
 		horizontalSpan.className = 'selectedHorizontal';
 		horizontalSpan.textContent = this.wordTo.slice(1, column + 1);
+		statusParagraph.textContent = '';
+		statusParagraph.append('Comparing ', verticalSpan, ' and ', horizontalSpan);
 	}
 	setStatusParagraphResult(){
 		const verticalSpan = document.createElement('span');
