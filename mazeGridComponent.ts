@@ -45,8 +45,6 @@ class ResponsiveGrid extends HTMLElement implements GridInterface{
             <style>
                 :host {
                     display: block;
-                    width: 100%;
-                    height: 100%;
                 }
                 #grid {
                     display: grid;
