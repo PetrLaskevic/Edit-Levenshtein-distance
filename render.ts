@@ -106,6 +106,26 @@ class WagnerFischer{
 		statusParagraph.append('Edit distance from ', verticalSpan, ' to ', horizontalSpan, ' is ', distanceSpan);
 	}
 
+	//Finds a minimum in list of "tuples" according to the "key" = the index in the tuple supplied
+	//Example: `min([["some", 1], ["text"],2], 1)` => indexToMinBy=1 means the minimum will be found by comparing the second item in each tuple
+	//Implemented because Math.min does not support anything but an array of numbers
+	min(list: any[], indexToMinBy: number){
+		let minimumSoFar = Number.POSITIVE_INFINITY;
+		let minimimumItem;
+		for(let item of list){
+			if(indexToMinBy + 1 > item.length){
+				throw Error(`IndexError: indexToMinBy ${indexToMinBy} bigger than ${item} length ${item.length}`);
+			}
+			if(!Number.isInteger(item[indexToMinBy])){
+				throw Error(`The tuple's item ${item[indexToMinBy]} at index ${indexToMinBy} is not a number! (${item})`);
+			}
+			if(item[indexToMinBy] < minimumSoFar){
+				minimumSoFar = item[indexToMinBy];
+				minimimumItem = item;
+			}
+		}
+		return minimimumItem;
+	}
 
 	async renderMaze(){
 		//set first column as the word from
@@ -160,6 +180,37 @@ class WagnerFischer{
 		};
 		this.grid.addClassToCell([this.numberOfRows-1, this.numberOfColumns-1], "from");
 		this.setStatusParagraphResult();
+		await wait(Number(animationDelay.value));
+		this.backtrack();
+	}
+
+	async backtrack(){
+		//the result is always in the bottom right row
+		let column = this.numberOfColumns - 1;
+		let row = this.numberOfRows - 1;
+		while(row != 1 || column != 1){
+			console.log(row, column);
+			//visualize the options
+			this.grid.addClassToCell([row, column - 1], "considered");
+			this.grid.addClassToCell([row - 1, column - 1], "considered");
+			this.grid.addClassToCell([row - 1, column], "considered");
+			await wait(Number(animationDelay.value));
+
+			let options = [
+				["delete", 	Number(this.grid.at(row, column - 1)), 		[ 0, -1]],
+				["replace", Number(this.grid.at(row - 1, column - 1)), 	[-1, -1]],
+				["insert", 	Number(this.grid.at(row - 1, column)), 		[-1,  0]]
+			].filter((value) => !Number.isNaN(value[1])); //for the first column / row (where there are letters)
+			let [minStepsOption,value,vector] = this.min(options, 1);
+			row += vector[0];
+			column += vector[1];
+			this.grid.addClassToCell([row,column],"chose");
+			await wait(Number(animationDelay.value));
+			this.grid.removeClassFromCell([row,column],"chose");
+			this.grid.addClassToCell([row,column],"prev");
+			statusParagraph.innerHTML = `Chose option <span class='choseText'>${minStepsOption}</span>, value <span class='choseText'>${value}</span>`;
+			await wait(Number(animationDelay.value));
+		}
 	}
 }
 

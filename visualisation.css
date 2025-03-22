@@ -11,10 +11,6 @@
     filter: invert(1) contrast(0.8);
 }
 
-.prev{
-    background: cornflowerblue;
-}
-
 .from{
     outline: 2px solid brown;
     background: brown;
@@ -37,6 +33,15 @@
 
 .considered{
     background: #ffd68a;
+}
+
+.prev{
+    background: cornflowerblue;
+}
+
+.chose{
+    border: 0.32em solid #3de185; /*9px*/
+    border-radius: 27px;
 }
 
 /*dark theme*/
@@ -83,5 +88,8 @@
     }
     .pathText{
         color: #008eff; /*#1b90ed*/
+    }
+    .prev{
+        background: #4d72b4;
     }
 }

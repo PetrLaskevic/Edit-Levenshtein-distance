@@ -42,6 +42,13 @@ main {
     color: #e4904d; 
 }
 
+.choseText{
+    border: 0.32em solid #3de185; /*9px*/
+    /* background: cornflowerblue; */
+    border-radius: 5px;
+    padding: 0 4px;
+}
+
 /*header styles*/
 .ctverecek{
     height: 1.25rem;
