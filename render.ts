@@ -73,7 +73,10 @@ class WagnerFischer{
 			this.grid.removeClassFromCell([0,column], "selectedHorizontal");
 		}
 	}
-
+	 
+	//Safer version of: 
+	//statusParagraph.innerHTML = `Comparing <span class="selectedVertical">${this.wordFrom.slice(1,row+1)}</span> and <span class="selectedHorizontal">${this.wordTo.slice(1, column+1)}</span>`
+	//(.innerHTML was vulnerable to: `""<img src='x' onerror='alert(1);console.log("t")'>` => an alert will be drawn
 	setStatusParagraph(row: number, column: number){
 		const verticalSpan = document.createElement('span');
 		verticalSpan.className = 'selectedVertical';
@@ -85,6 +88,8 @@ class WagnerFischer{
 		statusParagraph.textContent = '';
 		statusParagraph.append('Comparing ', verticalSpan, ' and ', horizontalSpan);
 	}
+	//Safer version of:
+	// statusParagraph.innerHTML = `Edit distance from <span class="selectedVertical">${this.wordFrom.slice(2)}</span> to <span class="selectedHorizontal">${this.wordTo.slice(2)}</span> is <span>${this.grid.at(this.numberOfRows-1,this.numberOfColumns-1)}</span>`
 	setStatusParagraphResult(){
 		const verticalSpan = document.createElement('span');
 		verticalSpan.className = 'selectedVertical';
@@ -129,8 +134,7 @@ class WagnerFischer{
 				this.grid.addClassToCell([0,column], "selectedHorizontal");
 				
 				this.grid.addClassToCell([row, column], "from");
-				//Vulnerable to ""<img src='x' onerror='alert(1);console.log("t")'> => alert will be drawn 
-				// statusParagraph.innerHTML = `Comparing <span class="selectedVertical">${this.wordFrom.slice(1,row+1)}</span> and <span class="selectedHorizontal">${this.wordTo.slice(1, column+1)}</span>`
+				
 				this.setStatusParagraph(row, column);
 
 				let deleteOption = this.grid.at(row, column - 1);
@@ -155,7 +159,6 @@ class WagnerFischer{
 			}
 		};
 		this.grid.addClassToCell([this.numberOfRows-1, this.numberOfColumns-1], "from");
-		// statusParagraph.innerHTML = `Edit distance from <span class="selectedVertical">${this.wordFrom.slice(2)}</span> to <span class="selectedHorizontal">${this.wordTo.slice(2)}</span> is <span>${this.grid.at(this.numberOfRows-1,this.numberOfColumns-1)}</span>`
 		this.setStatusParagraphResult();
 	}
 }
