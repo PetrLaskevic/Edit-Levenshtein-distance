@@ -203,17 +203,24 @@ class WagnerFischer{
 			options.forEach((value) => {
 				let [vecRow, vecColumn] = value[2]; //the [ 0, -1] vector in options
 				this.grid.addClassToCell([row + vecRow, column + vecColumn], "considered");
-			})
-			await wait(Number(animationDelay.value));
+			});
+			statusParagraph.textContent = "Choosing between these options"
+			await wait(Number(animationDelay.value)*1.5);
+
+			options.forEach((value) => {
+				let [vecRow, vecColumn] = value[2]; //the [ 0, -1] vector in options
+				this.grid.removeClassFromCell([row + vecRow, column + vecColumn], "considered");
+				this.grid.addClassToCell([row + vecRow, column + vecColumn], "previously-considered");
+			});
 
 			let [minStepsOption,value,vector] = this.min(options, 1);
 			row += vector[0];
 			column += vector[1];
 			this.grid.addClassToCell([row,column],"chose");
-			await wait(Number(animationDelay.value));
+			statusParagraph.innerHTML = `Chose option <span class='choseText'>${minStepsOption}</span>, value <span class='choseText'>${value}</span>`;
+			await wait(Number(animationDelay.value)*2);
 			this.grid.removeClassFromCell([row,column],"chose");
 			this.grid.addClassToCell([row,column],"prev");
-			statusParagraph.innerHTML = `Chose option <span class='choseText'>${minStepsOption}</span>, value <span class='choseText'>${value}</span>`;
 			await wait(Number(animationDelay.value));
 		}
 	}

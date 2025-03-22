@@ -49,6 +49,9 @@
     .considered{
         background: #888; /* #5f5bcc */
     }
+    .previously-considered{
+        background: #0305831c;
+    }
     .green{
         background: #206e2f8c;
     }
