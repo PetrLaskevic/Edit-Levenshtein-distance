@@ -190,17 +190,22 @@ class WagnerFischer{
 		let row = this.numberOfRows - 1;
 		while(row != 1 || column != 1){
 			console.log(row, column);
-			//visualize the options
-			this.grid.addClassToCell([row, column - 1], "considered");
-			this.grid.addClassToCell([row - 1, column - 1], "considered");
-			this.grid.addClassToCell([row - 1, column], "considered");
-			await wait(Number(animationDelay.value));
-
-			let options = [
+			//unfortunately, typescript doesn't see that during this filter, the type of the tuples doesn't change
+			//so either a type guard or type assertion is needed
+			//It's reflected in the filter value parameter being flattened to `value: (string | number | number[])[]`, not reflecting the order of types I specified
+			let options: [string, number, [number, number]][] = [
 				["delete", 	Number(this.grid.at(row, column - 1)), 		[ 0, -1]],
 				["replace", Number(this.grid.at(row - 1, column - 1)), 	[-1, -1]],
 				["insert", 	Number(this.grid.at(row - 1, column)), 		[-1,  0]]
-			].filter((value) => !Number.isNaN(value[1])); //for the first column / row (where there are letters)
+			].filter((value): value is [string, number, [number, number]] => !Number.isNaN(value[1])); //for the first column / row (where there are letters)
+			
+			//visualize the options
+			options.forEach((value) => {
+				let [vecRow, vecColumn] = value[2]; //the [ 0, -1] vector in options
+				this.grid.addClassToCell([row + vecRow, column + vecColumn], "considered");
+			})
+			await wait(Number(animationDelay.value));
+
 			let [minStepsOption,value,vector] = this.min(options, 1);
 			row += vector[0];
 			column += vector[1];
