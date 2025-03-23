@@ -112,6 +112,9 @@ class WagnerFischer{
 	min<T extends any[]>(list: T[], indexToMinBy: number): T{
 		let minimumSoFar = Number.POSITIVE_INFINITY;
 		let minimimumItem;
+		if(list.length == 0){
+			throw Error("You probably didn't want to pick the minimum item in an empty list");
+		}
 		for(let item of list){
 			if(indexToMinBy + 1 > item.length){
 				throw Error(`IndexError: indexToMinBy ${indexToMinBy} bigger than ${item} length ${item.length}`);
@@ -189,6 +192,7 @@ class WagnerFischer{
 		//the result is always in the bottom right row
 		let column = this.numberOfColumns - 1;
 		let row = this.numberOfRows - 1;
+		this.grid.addClassToCell([row, column], "prev");
 		while(row != 1 || column != 1){
 			console.log(row, column);
 			//unfortunately, typescript doesn't see that during this filter, the type of the tuples doesn't change
@@ -223,6 +227,56 @@ class WagnerFischer{
 			this.grid.removeClassFromCell([row,column],"chose");
 			this.grid.addClassToCell([row,column],"prev");
 			await wait(Number(animationDelay.value));
+		}
+		this.visualiseDiff();
+	}
+	async visualiseDiff(){
+		//walks down from top left corner to bottom right corner along the cells selected by backtrack() to visualise the changes
+		let row = 1;
+		let column = 1;
+		while(row != this.numberOfRows - 1 || column != this.numberOfColumns - 1){
+			console.log("ran", row, column, row != this.numberOfRows - 1, column != this.numberOfColumns - 1, this.numberOfRows, this.numberOfColumns);
+			let options: [string, number, [number, number], [number, number]][] = [
+				["insert", 	Number(this.grid.atNoExcept(row, column + 1)), 		[0, 1], [row, column + 1]], //going there is an insert operation
+				["delete", 	Number(this.grid.atNoExcept(row + 1, column)), 		[1, 0], [row + 1, column]], //going there is an delete operation
+				["replace", Number(this.grid.atNoExcept(row + 1, column + 1)), 	[1, 1], [row + 1, column + 1]] //going there is a replace operation
+			].filter((value): value is [string, number, [number, number], [number, number]] => 
+				{	
+					let vector = value[2] as [number, number];
+					return !Number.isNaN(value[1]) && //filter out out of bounds: Number(undefined) is NaN
+					this.grid.elementAt(row + vector[0], column + vector[1]).classList.contains("prev") //to go through the same cells the backtrack() suggested
+				}
+			);
+
+			let [minStepsOption,value,vector] = this.min(options, 1);
+			let minStepsOptionRow = row + vector[0];
+			let minStepsOptionColumn = column + vector[1];
+			
+			this.grid.addClassToCell([minStepsOptionRow, minStepsOptionColumn], "roundBorder");
+			if(minStepsOption == "insert"){
+				if(Number(this.grid.at(row, column)) == value){
+					statusParagraph.textContent = `Both words have the same letter ${this.wordTo[minStepsOptionColumn]}, no replacement needed`
+				}else{
+					statusParagraph.textContent = `insert ${this.wordTo[minStepsOptionColumn]}`;
+				}
+			}else if(minStepsOption == "delete"){
+				//for example baaats to flaaa
+				if(Number(this.grid.at(row, column)) == value){
+					statusParagraph.textContent = `Both words have the same letter ${this.wordTo[minStepsOptionColumn]}, no deletion needed`
+				}else{
+					statusParagraph.textContent = `delete ${this.wordFrom[minStepsOptionRow]}`;
+				}
+			}else if(minStepsOption == "replace"){
+				console.log("prev", Number(this.grid.at(row, column)), "next", value);
+				if(Number(this.grid.at(row, column)) == value){
+					statusParagraph.textContent = `Both words have the same letter ${this.wordTo[minStepsOptionColumn]}, no replacement needed`
+				}else{
+					statusParagraph.textContent = `replace ${this.wordFrom[minStepsOptionRow]} with ${this.wordTo[minStepsOptionColumn]}`;
+				}
+			}
+			[row, column] = [minStepsOptionRow, minStepsOptionColumn];
+			await wait(Number(animationDelay.value)*3);
+			this.grid.removeClassFromCell([row, column], "roundBorder");
 		}
 	}
 }
