@@ -232,13 +232,18 @@ class WagnerFischer{
 		let column = 1;
 		while(row != this.numberOfRows - 1 || column != this.numberOfColumns - 1){
 			console.log("ran", row, column, row != this.numberOfRows - 1, column != this.numberOfColumns - 1, this.numberOfRows, this.numberOfColumns);
-			let options: [string, number, [number, number]][] = [
-				["insert", 	Number(this.grid.atNoExcept(row, column + 1)), 		[0, 1]], //going there is an insert operation
-				["delete", 	Number(this.grid.atNoExcept(row + 1, column)), 		[1, 0]], //going there is an delete operation
-				["replace", Number(this.grid.atNoExcept(row + 1, column + 1)), 	[1, 1]] //going there is a replace operation
-			].filter((value): value is [string, number, [number, number]] => 
+			
+			type Operation = "Insert" | "Delete" | "Replace";
+			type Option = [Operation, valueAtCell: number, vector: [number, number]];
+			let options: Option[] = [
+				["Insert", 	Number(this.grid.atNoExcept(row, column + 1)), 		[0, 1]], //going there is an Insert operation
+				["Delete", 	Number(this.grid.atNoExcept(row + 1, column)), 		[1, 0]], //going there is an Delete operation
+				["Replace", Number(this.grid.atNoExcept(row + 1, column + 1)), 	[1, 1]] //going there is a Replace operation
+			];
+			
+			options = options.filter((value) => //has to be split up like this ( .filter not in the declaration) because of TS
 				{	
-					let vector = value[2] as [number, number];
+					let vector = value[2];
 					return !Number.isNaN(value[1]) && //filter out out of bounds: Number(undefined) is NaN
 					this.grid.elementAt(row + vector[0], column + vector[1]).classList.contains("prev") //to go through the same cells the backtrack() suggested
 				}
