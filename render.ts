@@ -109,7 +109,7 @@ class WagnerFischer{
 	//Finds a minimum in list of "tuples" according to the "key" = the index in the tuple supplied
 	//Example: `min([["some", 1], ["text"],2], 1)` => indexToMinBy=1 means the minimum will be found by comparing the second item in each tuple
 	//Implemented because Math.min does not support anything but an array of numbers
-	min(list: any[], indexToMinBy: number){
+	min<T extends any[]>(list: T[], indexToMinBy: number): T{
 		let minimumSoFar = Number.POSITIVE_INFINITY;
 		let minimimumItem;
 		for(let item of list){
@@ -124,7 +124,8 @@ class WagnerFischer{
 				minimimumItem = item;
 			}
 		}
-		return minimimumItem;
+		//guaranteed to return some item, as anything I put in there is < than Number.POSITIVE_INFINITY
+		return minimimumItem as T;
 	}
 
 	async renderMaze(){
