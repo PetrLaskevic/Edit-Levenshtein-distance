@@ -36,10 +36,6 @@ function wait(ms: number) {
 	}
 }
 
-function stopAllAnimationDelays(){
-	globalCancelToken.cancelAll();
-}
-
 let animationDelay = document.getElementById("visualisationDelayPicker") as HTMLInputElement;
 let statusParagraph = document.querySelector(".presentResult") as HTMLParagraphElement;
 
@@ -65,7 +61,7 @@ class WagnerFischer{
 		this.grid = grid;
 		this.resultParagraph = (document.querySelector(".presentResult") as HTMLElement);
 		this.resultParagraph.innerHTML = "<br>";
-		this.renderMaze();
+		this.main();
 	}
 
 	unselectAllLettersHorizontal(){
@@ -131,7 +127,7 @@ class WagnerFischer{
 		return minimimumItem as T;
 	}
 
-	async renderMaze(){
+	async main(){
 		//set first column as the word from
 		for(const [index, char] of Array.from(this.wordFrom).entries()){
 			this.grid.setTextToCell([index,0], char);
@@ -236,11 +232,11 @@ class WagnerFischer{
 		let column = 1;
 		while(row != this.numberOfRows - 1 || column != this.numberOfColumns - 1){
 			console.log("ran", row, column, row != this.numberOfRows - 1, column != this.numberOfColumns - 1, this.numberOfRows, this.numberOfColumns);
-			let options: [string, number, [number, number], [number, number]][] = [
-				["insert", 	Number(this.grid.atNoExcept(row, column + 1)), 		[0, 1], [row, column + 1]], //going there is an insert operation
-				["delete", 	Number(this.grid.atNoExcept(row + 1, column)), 		[1, 0], [row + 1, column]], //going there is an delete operation
-				["replace", Number(this.grid.atNoExcept(row + 1, column + 1)), 	[1, 1], [row + 1, column + 1]] //going there is a replace operation
-			].filter((value): value is [string, number, [number, number], [number, number]] => 
+			let options: [string, number, [number, number]][] = [
+				["insert", 	Number(this.grid.atNoExcept(row, column + 1)), 		[0, 1]], //going there is an insert operation
+				["delete", 	Number(this.grid.atNoExcept(row + 1, column)), 		[1, 0]], //going there is an delete operation
+				["replace", Number(this.grid.atNoExcept(row + 1, column + 1)), 	[1, 1]] //going there is a replace operation
+			].filter((value): value is [string, number, [number, number]] => 
 				{	
 					let vector = value[2] as [number, number];
 					return !Number.isNaN(value[1]) && //filter out out of bounds: Number(undefined) is NaN
