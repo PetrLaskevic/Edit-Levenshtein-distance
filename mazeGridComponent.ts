@@ -125,12 +125,19 @@ class ResponsiveGrid extends HTMLElement implements GridInterface{
         }
         return text;
     }
+    //Doesn't throw an IndexError, when row / number out of bounds, returns undefined instead
+    atNoExcept(row: number, column: number){
+        if(row >= this.rows || column >= this.columns || row < 0 || column < 0){
+            return undefined;
+        }
+        return this.at(row, column);
+    }
     //public function, returns the cell DOM element at the specified index
     elementAt(row: number, column: number): HTMLDivElement {
         if(!Number.isInteger(row) || !Number.isInteger(column)){
             throw Error("Arguments must be numbers");
         }
-        if(row >= this.rows || column >= this.columns){
+        if(row >= this.rows || column >= this.columns || row < 0 || column < 0){
             throw Error(`IndexError, ${row}, ${column}, while size is ${this.rows}, ${this.columns}`);
         }
         
