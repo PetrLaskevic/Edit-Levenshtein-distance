@@ -38,6 +38,12 @@ main {
     background: #ee6624;;
 }
 
+.block{ /*for status text single letters to appear as square blocks*/
+    aspect-ratio: 1/1;
+    height: 1lh;
+    display: inline-block;
+}
+
 .selectedLetter{
     color: #e4904d; 
 }

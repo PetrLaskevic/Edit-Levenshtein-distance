@@ -268,11 +268,12 @@ class WagnerFischer{
 				statusParagraph.textContent = `Both words have the same letter ${this.wordTo[minStepsOptionColumn]}, no ${operationVerbToNoun[minStepsOption]} needed`;
 			}else{
 				if(minStepsOption == "Replace"){
-					statusParagraph.textContent = `Replace ${this.wordFrom[minStepsOptionRow]} with ${this.wordTo[minStepsOptionColumn]}`;
+					statusParagraph.innerHTML = `Replace <span class='selectedVertical block'>${this.wordFrom[minStepsOptionRow]}</span> with <span class='selectedHorizontal block'>${this.wordTo[minStepsOptionColumn]}</span>`;
 				}else if(minStepsOption == "Delete"){
-					statusParagraph.textContent = `Delete ${this.wordFrom[minStepsOptionRow]}`;
+					console.log("this.wordFrom[minStepsOptionRow]", this.wordFrom[minStepsOptionRow])
+					statusParagraph.innerHTML = `Delete <span class='selectedVertical block'>${this.wordFrom[minStepsOptionRow]}</span>`;
 				}else if(minStepsOption == "Insert"){
-					statusParagraph.textContent = `Insert ${this.wordTo[minStepsOptionColumn]}`;
+					statusParagraph.innerHTML = `Insert <span class='selectedHorizontal block'>${this.wordTo[minStepsOptionColumn]}</span>`;
 				}
 			}
 
