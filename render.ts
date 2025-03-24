@@ -166,9 +166,31 @@ class WagnerFischer{
 				this.grid.addClassToCell([row - 1, column - 1], "considered");
 				this.grid.addClassToCell([row - 1, column], "considered");
 
+				// last letter of both compared substrings is equal
 				if(this.wordFrom[row] == this.wordTo[column]){
-					this.grid.setTextToCell([row,column], minStepsOption);
+					/*Important = NOT THE minStepsOption HERE, but STRICTLY the upper left diagonal
+					REASON: the last letters being the same means that the number of steps is the same as for BOTH SUBSTRINGS WITHOUT THE LAST LETTER
+					WHICH IS IN FACT STRICTLY UPPER LEFT DIAGONAL => some online tutorials get this wrong and suggest minStepsOption instead
+					leading to wrong outcomes like:
+					ts => tts having 0 edit distance (obviously false, not equal strings)
+					cased by taking minStepsOption and having two of the same letter "t" consecutively in one of the substrings 
+					(the first "t" gets correctly counted as 0, BUT the second "t" on the same row gets counted as 0 as well):
+					This wrong matrix for reference here:
+						  _ t t s
+						_ 0 1 2 3
+						t 1 0 0 1 <- notice the two 0 next together
+						s 2 1 1 0
+					*/
+					this.grid.setTextToCell([row,column], this.grid.at(row-1, column-1));
 				}else{
+					//When last letter of both compared substrings isn't equal, there must be an extra operation
+					//What the operation is depends on the context you're looking at the cell with 
+					// (=relative to which cell is this cell being looked at)
+					// = the same cell means different operations for different surrouding cells
+					// = in other, the meaning is inferred from the relative position of the cell (delete, replace, insert)
+					// insert what to get from what to what = different substrings
+					//OF COURSE THE VALUE IN THE CELL HAS MEANING TO THE CELL ITSELF, AND NOT ONLY AS THE (delete, replace, insert) OPTION FOR OTHER CELLS
+					//THE MEANING IS THE EDIT DISTANCE FOR TWO PARTICULAR SUBTRINGS (substring of wordFrom and substring of wordTo) = number of steps how to get there
 					this.grid.setTextToCell([row,column], minStepsOption + 1);
 				}
 				await wait(Number(animationDelay.value));
