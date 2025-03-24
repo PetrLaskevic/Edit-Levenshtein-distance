@@ -254,27 +254,28 @@ class WagnerFischer{
 			let minStepsOptionColumn = column + vector[1];
 			
 			this.grid.addClassToCell([minStepsOptionRow, minStepsOptionColumn], "roundBorder");
-			if(minStepsOption == "insert"){
-				if(Number(this.grid.at(row, column)) == value){
-					statusParagraph.textContent = `Both words have the same letter ${this.wordTo[minStepsOptionColumn]}, no replacement needed`
-				}else{
-					statusParagraph.textContent = `insert ${this.wordTo[minStepsOptionColumn]}`;
-				}
-			}else if(minStepsOption == "delete"){
-				//for example baaats to flaaa
-				if(Number(this.grid.at(row, column)) == value){
-					statusParagraph.textContent = `Both words have the same letter ${this.wordTo[minStepsOptionColumn]}, no deletion needed`
-				}else{
-					statusParagraph.textContent = `delete ${this.wordFrom[minStepsOptionRow]}`;
-				}
-			}else if(minStepsOption == "replace"){
-				console.log("prev", Number(this.grid.at(row, column)), "next", value);
-				if(Number(this.grid.at(row, column)) == value){
-					statusParagraph.textContent = `Both words have the same letter ${this.wordTo[minStepsOptionColumn]}, no replacement needed`
-				}else{
-					statusParagraph.textContent = `replace ${this.wordFrom[minStepsOptionRow]} with ${this.wordTo[minStepsOptionColumn]}`;
+
+			//Tell the user what operations we've done
+			const operationVerbToNoun = {
+				"Insert": "insertion",
+				"Delete": "deletion",
+				"Replace": "replacement"
+			} as const;
+
+			if(Number(this.grid.at(row, column)) == value){
+				//for all operations - when two adjacent cells in the optimal path have the same number of steps from the beginning
+				//for example for deletion "baaats" to "flaaa" or "horse" to "ros"
+				statusParagraph.textContent = `Both words have the same letter ${this.wordTo[minStepsOptionColumn]}, no ${operationVerbToNoun[minStepsOption]} needed`;
+			}else{
+				if(minStepsOption == "Replace"){
+					statusParagraph.textContent = `Replace ${this.wordFrom[minStepsOptionRow]} with ${this.wordTo[minStepsOptionColumn]}`;
+				}else if(minStepsOption == "Delete"){
+					statusParagraph.textContent = `Delete ${this.wordFrom[minStepsOptionRow]}`;
+				}else if(minStepsOption == "Insert"){
+					statusParagraph.textContent = `Insert ${this.wordTo[minStepsOptionColumn]}`;
 				}
 			}
+
 			[row, column] = [minStepsOptionRow, minStepsOptionColumn];
 			await wait(Number(animationDelay.value)*3);
 			this.grid.removeClassFromCell([row, column], "roundBorder");
