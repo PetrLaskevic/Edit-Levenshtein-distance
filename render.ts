@@ -218,8 +218,8 @@ class WagnerFischer{
 			//It's reflected in the filter value parameter being flattened to `value: (string | number | number[])[]`, not reflecting the order of types I specified
 			let options: [string, number, [number, number]][] = [
 				["delete", 	Number(this.grid.at(row, column - 1)), 		[ 0, -1]],
+				["insert", 	Number(this.grid.at(row - 1, column)), 		[-1,  0]],
 				["replace", Number(this.grid.at(row - 1, column - 1)), 	[-1, -1]],
-				["insert", 	Number(this.grid.at(row - 1, column)), 		[-1,  0]]
 			].filter((value): value is [string, number, [number, number]] => !Number.isNaN(value[1])); //for the first column / row (where there are letters)
 			
 			//visualize the options
@@ -258,8 +258,8 @@ class WagnerFischer{
 			type Operation = "Insert" | "Delete" | "Replace";
 			type Option = [Operation, valueAtCell: number, vector: [number, number]];
 			let options: Option[] = [
-				["Insert", 	Number(this.grid.atNoExcept(row, column + 1)), 		[0, 1]], //going there is an Insert operation
 				["Delete", 	Number(this.grid.atNoExcept(row + 1, column)), 		[1, 0]], //going there is an Delete operation
+				["Insert", 	Number(this.grid.atNoExcept(row, column + 1)), 		[0, 1]], //going there is an Insert operation
 				["Replace", Number(this.grid.atNoExcept(row + 1, column + 1)), 	[1, 1]] //going there is a Replace operation
 			];
 			
